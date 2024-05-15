@@ -39,7 +39,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Create bundle
-        run: python github_action_scripts/run_bundling.py '${{ env.design-url }}' '${{ secrets.design-api-key }}' '${{ inputs.dss-project }}' '${{ inputs.bundle-id }}'
+        run: python package_bundle/run_bundling.py '${{ env.design-url }}' '${{ secrets.design-api-key }}' '${{ inputs.dss-project }}' '${{ inputs.bundle-id }}'
 
       - name: Publish Artifact
         uses: actions/upload-artifact@v4
