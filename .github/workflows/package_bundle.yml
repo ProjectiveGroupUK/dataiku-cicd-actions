@@ -30,7 +30,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          repository: ProjectiveGroupUK/dataiku-cicd-actions
+          repository: ProjectiveGroupUK/dataiku-cicd-actions@main
           token: ${{ secrets.repo-token }}
 
       - name: List files in this repository
