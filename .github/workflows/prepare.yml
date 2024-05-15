@@ -1,0 +1,47 @@
+name: Dataiku Predeployment Preparation
+
+on:
+  workflow_call:
+    # inputs:
+    #   dss-project:
+    #     required: true
+    #     type: string
+    # secrets:
+    #   design-api-key:
+    #     required: true
+
+jobs:
+  prepare:
+    name: Preparation
+    runs-on: ubuntu-latest
+    outputs:
+      bundle: ${{ steps.set-bundle-id.outputs.bundle }}
+    steps:
+      #   - name: Checkout repository
+      #     uses: actions/checkout@v4
+
+      #   - name: Set up Python 3.10
+      #     uses: actions/setup-python@v5
+      #     with:
+      #       python-version: "3.10"
+
+      - name: Set bundle id
+        id: set-bundle-id
+        run: |
+          bundle=$(date +bundle_%Y-%m-%d_%H-%M-%S)
+          echo "bundle=$bundle" >> $GITHUB_ENV
+          echo "bundle=$bundle" >> $GITHUB_OUTPUT
+
+    #   - name: List directory contents
+    #     run: ls -la
+
+    #   - name: Install dependencies
+    #     run: |
+    #       python -m pip install --upgrade pip setuptools wheel
+    #       pip install -r github_action_scripts/requirements.txt
+
+    #   - name: Cat requirements.txt
+    #     run: cat requirements.txt
+
+    #   - name: Print environment variables
+    #     run: printenv
