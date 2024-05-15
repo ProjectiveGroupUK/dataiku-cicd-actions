@@ -11,11 +11,11 @@ on:
         description: "Bundle ID generated in Preparation Step"
         required: true
         type: string
-    secrets:
-      design-api-key:
-        required: true
-      repo-token:
-        required: true
+    # secrets:
+    #   design-api-key:
+    #     required: true
+    #   repo-token:
+    #     required: true
 
 env:
   # DSS_PROJECT: CICDPROJECT1
