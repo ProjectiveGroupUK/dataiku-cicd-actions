@@ -32,7 +32,7 @@ jobs:
         with:
           repository: 'ProjectiveGroupUK/dataiku-cicd-actions'
           ref: 'main'
-          token: ${{ secrets.repo-token }}
+          # token: ${{ secrets.PAT }}
 
       - name: List files in this repository
         run: ls -la
@@ -48,7 +48,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Create bundle
-        run: python package_bundle/run_bundling.py '${{ env.design-url }}' '${{ secrets.design-api-key }}' '${{ inputs.dss-project }}' '${{ inputs.bundle-id }}'
+        run: python package_bundle/run_bundling.py '${{ env.design-url }}' '${{ secrets.DESIGN_API_KEY }}' '${{ inputs.dss-project }}' '${{ inputs.bundle-id }}'
 
       - name: Publish Artifact
         uses: actions/upload-artifact@v4
