@@ -11,16 +11,9 @@ on:
         description: "Bundle ID generated in Preparation Step"
         required: true
         type: string
-    # secrets:
-    #   design-api-key:
-    #     required: true
-    #   repo-token:
-    #     required: true
 
 env:
-  # DSS_PROJECT: CICDPROJECT1
   design-url: https://dss-4e19401b-7badb918-dku.eu-west-3.app.dataiku.io
-  # DESIGN_API_KEY: iIQsGcWDxzYOJE1s5soCBqdRErzzfJwR
 
 jobs:
   package-bundle:
@@ -32,7 +25,6 @@ jobs:
         with:
           repository: 'ProjectiveGroupUK/dataiku-cicd-actions'
           ref: 'main'
-          # token: ${{ secrets.PAT }}
 
       - name: List files in this repository
         run: ls -la
