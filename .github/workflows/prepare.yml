@@ -2,20 +2,22 @@ name: Dataiku Predeployment Preparation
 
 on:
   workflow_call:
-    # inputs:
-    #   dss-project:
-    #     required: true
-    #     type: string
-    # secrets:
-    #   design-api-key:
-    #     required: true
+    inputs:
+      dss-project:
+        description: "Dataiku Project ID"
+        required: true
+        type: string
+    outputs:
+      bundle-id:
+        description: "Generated Bundle ID"
+        value: ${{ jobs.prepare.outputs.bundle-id }}
 
 jobs:
   prepare:
     name: Preparation
     runs-on: ubuntu-latest
     outputs:
-      bundle: ${{ steps.set-bundle-id.outputs.bundle }}
+      bundle-id: ${{ steps.set-bundle-id.outputs.bundle }}
     steps:
       #   - name: Checkout repository
       #     uses: actions/checkout@v4
@@ -28,8 +30,7 @@ jobs:
       - name: Set bundle id
         id: set-bundle-id
         run: |
-          bundle=$(date +bundle_%Y-%m-%d_%H-%M-%S)
-          echo "bundle=$bundle" >> $GITHUB_ENV
+          bundle=$(date +${{ inputs.dss-project }}_BUNDLE_%Y-%m-%d_%H-%M-%S)
           echo "bundle=$bundle" >> $GITHUB_OUTPUT
 
     #   - name: List directory contents
