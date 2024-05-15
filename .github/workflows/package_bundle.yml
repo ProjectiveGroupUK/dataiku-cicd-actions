@@ -14,8 +14,8 @@ on:
     secrets:
       design-api-key:
         required: true
-      repo-token:
-        required: true
+      # repo-token:
+      #   required: true
 
 env:
   # DSS_PROJECT: CICDPROJECT1
@@ -30,8 +30,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          repository: ProjectiveGroupUK/dataiku-cicd-actions@main
-          token: ${{ secrets.repo-token }}
+          repository: 'ProjectiveGroupUK/dataiku-cicd-actions'
+          ref: 'main'
+          # token: ${{ secrets.repo-token }}
 
       - name: List files in this repository
         run: ls -la
