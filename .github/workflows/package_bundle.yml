@@ -4,15 +4,17 @@ on:
   workflow_call:
     inputs:
       dss-project:
-        description: 'Dataiku Project ID'
+        description: "Dataiku Project ID"
         required: true
         type: string
       bundle-id:
-        description: 'Bundle ID generated in Preparation Step'
+        description: "Bundle ID generated in Preparation Step"
         required: true
         type: string
     secrets:
       design-api-key:
+        required: true
+      repo-token:
         required: true
 
 env:
@@ -27,6 +29,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          repository: my-org/my-repo
+          token: ${{ secrets.repo-token }}
+
+      - name: List files in this repository
+        run: ls -la
 
       - name: Set up Python 3.10
         uses: actions/setup-python@v5
