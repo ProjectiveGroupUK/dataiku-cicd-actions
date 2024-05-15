@@ -14,8 +14,8 @@ on:
     secrets:
       design-api-key:
         required: true
-      # repo-token:
-      #   required: true
+      repo-token:
+        required: true
 
 env:
   # DSS_PROJECT: CICDPROJECT1
@@ -32,7 +32,7 @@ jobs:
         with:
           repository: 'ProjectiveGroupUK/dataiku-cicd-actions'
           ref: 'main'
-          # token: ${{ secrets.repo-token }}
+          token: ${{ secrets.repo-token }}
 
       - name: List files in this repository
         run: ls -la
