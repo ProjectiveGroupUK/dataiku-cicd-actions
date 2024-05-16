@@ -1,4 +1,4 @@
-name: Package Bundle Stage
+name: Project Validation Stage
 
 on:
   workflow_call:
@@ -7,24 +7,20 @@ on:
         description: "Dataiku Project ID"
         required: true
         type: string
-      bundle-id:
-        description: "Bundle ID generated in Preparation Step"
-        required: true
-        type: string
 
 env:
   node-url: https://dss-4e19401b-7badb918-dku.eu-west-3.app.dataiku.io
 
 jobs:
-  package-bundle:
-    name: Package Bundle
+  validate:
+    name: Project Validation
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          repository: 'ProjectiveGroupUK/dataiku-cicd-actions'
-          ref: 'main'
+          repository: "ProjectiveGroupUK/dataiku-cicd-actions"
+          ref: "main"
 
       # - name: List files in this repository
       #   run: ls -la
@@ -39,11 +35,17 @@ jobs:
           python -m pip install --upgrade pip setuptools wheel
           pip install -r requirements.txt
 
-      - name: Create bundle
-        run: python package_bundle/run_bundling.py '${{ env.node-url }}' '${{ secrets.DESIGN_API_KEY }}' '${{ inputs.dss-project }}' '${{ inputs.bundle-id }}'
+      - name: Run pytest
+        run: python -m pytest project_validation/run_test.py -o junit_family=xunit1 --host='${{ env.node_url }}' --api='${{ secrets.DESIGN_API_KEY }}' --project='${{ env.dss-project }}' --junitxml=reports/PROJECT_VALIDATION.xml
 
-      - name: Publish Artifact
+      - name: Upload test results
         uses: actions/upload-artifact@v4
         with:
-          name: bundle
-          path: ${{ inputs.bundle-id }}.zip
+          name: Project validation test results
+          path: reports/PROJECT_VALIDATION.xml
+
+      - name: Publish Test Report
+        if: always()
+        uses: mikepenz/action-junit-report@v4
+        with:
+          report_paths: "**/reports/PROJECT_VALIDATION.xml"

@@ -1,4 +1,4 @@
-name: Dataiku Predeployment Preparation
+name: Preparation Stage
 
 on:
   workflow_call:

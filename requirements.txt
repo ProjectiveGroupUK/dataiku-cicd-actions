@@ -1,3 +1,5 @@
 https://dss-4e19401b-7badb918-dku.eu-west-3.app.dataiku.io/public/packages/dataiku-internal-client.tar.gz
 dataiku-api-client
 pandas
+radon
+pytest
