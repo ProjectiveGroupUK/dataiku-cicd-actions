@@ -37,7 +37,7 @@ jobs:
 
       - name: Run pytest
         run: |
-          python -m pytest 1_project_validation/run_test.py -o junit_family=xunit1 --host='${{ env.node-url }}' --api='${{ secrets.DESIGN_API_KEY }}' --project='${{ env.dss-project }}' --junitxml=reports/PROJECT_VALIDATION.xml
+          python -m pytest 1_project_validation/run_test.py -o junit_family=xunit1 --host='${{ env.node-url }}' --api='${{ secrets.DESIGN_API_KEY }}' --project='${{ inputs.dss-project }}' --junitxml=reports/PROJECT_VALIDATION.xml
       
       - name: Publish Test Results
         if: always()
