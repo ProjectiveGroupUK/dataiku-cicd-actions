@@ -36,16 +36,12 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run pytest
-        run: python -m pytest project_validation/run_test.py -o junit_family=xunit1 --host='${{ env.node_url }}' --api='${{ secrets.DESIGN_API_KEY }}' --project='${{ env.dss-project }}' --junitxml=reports/PROJECT_VALIDATION.xml
-
-      - name: Upload test results
+        run: |
+          python -m pytest 1_project_validation/run_test.py -o junit_family=xunit1 --host='${{ env.node-url }}' --api='${{ secrets.DESIGN_API_KEY }}' --project='${{ env.dss-project }}' --junitxml=reports/PROJECT_VALIDATION.xml
+      
+      - name: Publish Test Results
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: Project validation test results
-          path: reports/PROJECT_VALIDATION.xml
-
-      - name: Publish Test Report
-        if: always()
-        uses: mikepenz/action-junit-report@v4
-        with:
-          report_paths: "**/reports/PROJECT_VALIDATION.xml"
+          path: reports/**/*.xml
