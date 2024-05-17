@@ -35,10 +35,16 @@ jobs:
           python -m pip install --upgrade pip setuptools wheel
           pip install -r requirements.txt
 
+      - name: Install Node.js and xml2js
+        run: |
+          curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+          sudo apt-get install -y nodejs
+          npm install xml2js
+
       - name: Run pytest
         run: |
           python -m pytest project_validation/run_test.py -o junit_family=xunit1 --host='${{ env.node-url }}' --api='${{ secrets.DESIGN_API_KEY }}' --project='${{ inputs.dss-project }}' --junitxml=reports/PROJECT_VALIDATION.xml
-      
+
       - name: Upload Test Results
         if: always()
         uses: actions/upload-artifact@v4
