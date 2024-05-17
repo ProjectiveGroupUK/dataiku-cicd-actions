@@ -71,6 +71,9 @@ jobs:
                 throw err;
               }
 
+              // Log the parsed result for debugging
+              console.log(JSON.stringify(result, null, 2));
+
               // Extract test results
               const tests = result.testsuite.testcase.map(testcase => ({
                 name: testcase.$.name,
