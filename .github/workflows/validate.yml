@@ -51,3 +51,5 @@ jobs:
         uses: mikepenz/action-junit-report@v4
         with:
           report_paths: '**/reports/PROJECT_VALIDATION.xml'
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT }}
