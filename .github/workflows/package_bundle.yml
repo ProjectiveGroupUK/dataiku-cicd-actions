@@ -23,8 +23,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          repository: 'ProjectiveGroupUK/dataiku-cicd-actions'
-          ref: 'main'
+          repository: "ProjectiveGroupUK/dataiku-cicd-actions"
+          ref: "main"
 
       # - name: List files in this repository
       #   run: ls -la
@@ -38,6 +38,12 @@ jobs:
         run: |
           python -m pip install --upgrade pip setuptools wheel
           pip install -r requirements.txt
+
+      - name: Install Node.js and xml2js
+        run: |
+          curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+          sudo apt-get install -y nodejs
+          npm install xml2js
 
       - name: Create bundle
         run: python package_bundle/run_bundling.py '${{ env.node-url }}' '${{ secrets.DESIGN_API_KEY }}' '${{ inputs.dss-project }}' '${{ inputs.bundle-id }}'
