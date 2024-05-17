@@ -75,7 +75,8 @@ jobs:
               console.log(JSON.stringify(result, null, 2));
 
               // Extract test results
-              const tests = result.testsuites.testsuite.testcase.map(testcase => ({
+              const testsuite = result.testsuites.testsuite[0];
+              const tests = testsuite.testcase.map(testcase => ({
                 name: testcase.$.name,
                 classname: testcase.$.classname,
                 time: testcase.$.time,
