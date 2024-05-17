@@ -8,7 +8,7 @@ project = sys.argv[3]
 client = dataikuapi.DSSClient(host,apiKey )
 test_project = client.get_project(project)
 
-test_project.DSSProjectGit.pull() #needs testing
+test_project.pull() #needs testing
 
 scenario = test_project.get_scenario('TEST')
 
