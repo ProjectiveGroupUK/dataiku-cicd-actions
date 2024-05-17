@@ -26,8 +26,8 @@ jobs:
           repository: "ProjectiveGroupUK/dataiku-cicd-actions"
           ref: "main"
 
-      # - name: List files in this repository
-      #   run: ls -la
+      - name: List files in this repository
+        run: ls -la
 
       - name: Set up Python 3.10
         uses: actions/setup-python@v5
