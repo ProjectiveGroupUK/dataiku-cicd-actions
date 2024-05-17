@@ -46,10 +46,40 @@ jobs:
           name: Project validation test results
           path: reports/**/*.xml
 
-      - name: Publish Test Report
-        if: always()
-        uses: mikepenz/action-junit-report@v4
+      - name: Generate summary
+        uses: actions/github-script@v7
         with:
-          report_paths: '**/reports/PROJECT_VALIDATION.xml'
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT }}
+          script: |
+            const fs = require('fs');
+            const xml2js = require('xml2js');
+            const parser = new xml2js.Parser();
+
+            // Read the JUnit XML report
+            const reportPath = 'reports/PROJECT_VALIDATION.xml';
+            const reportXml = fs.readFileSync(reportPath, 'utf8');
+
+            // Parse the XML report
+            parser.parseString(reportXml, (err, result) => {
+              if (err) {
+                throw err;
+              }
+
+              // Extract test results
+              const tests = result.testsuite.testcase.map(testcase => ({
+                name: testcase.$.name,
+                classname: testcase.$.classname,
+                time: testcase.$.time,
+                failure: testcase.failure ? testcase.failure[0]._ : null,
+              }));
+
+              // Create a summary
+              let summary = `## Test Results\n\n`;
+              summary += `| Test | Class | Time | Result |\n`;
+              summary += `|------|-------|------|--------|\n`;
+              tests.forEach(test => {
+                summary += `| ${test.name} | ${test.classname} | ${test.time} | ${test.failure ? 'Failed' : 'Passed'} |\n`;
+              });
+
+              // Write to GitHub Actions summary
+              fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, summary);
+            });
