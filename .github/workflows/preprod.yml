@@ -57,7 +57,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: Project validation test results
+          name: proprod-validation-${{ github.run_id }}-${{ github.job }}
           path: reports/**/PREPROD_TEST.xml
 
       - name: Generate summary
