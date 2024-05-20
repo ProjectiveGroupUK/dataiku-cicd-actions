@@ -1,0 +1,45 @@
+name: Production Deployment
+
+on:
+  workflow_call:
+    inputs:
+      dss-project:
+        description: "Dataiku Project ID"
+        required: true
+        type: string
+      bundle-id:
+        description: "Bundle ID generated in Preparation Step"
+        required: true
+        type: string
+
+env:
+  design-node-url: https://dss-4e19401b-7badb918-dku.eu-west-3.app.dataiku.io
+  prod-node-url: https://automation-4e19401b-7badb918-dku.eu-west-3.app.dataiku.io/
+  auto-prod-id: auto-prod
+
+jobs:
+  preprod:
+    name: Production Deployment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          repository: "ProjectiveGroupUK/dataiku-cicd-actions"
+          ref: "main"
+
+      # - name: List files in this repository
+      #   run: ls -la
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          pip install -r requirements.txt
+
+      - name: Upload in Prod
+        run: python deploy_prod/deploy_bundle.py '${{ env.design-node-url }}' '${{ secrets.DESIGN_API_KEY }}' '${{ inputs.dss-project }}' '${{ inputs.bundle-id }}' '${{ env.auto-prod-id }}' '${{ env.prod-node-url }}' '${{ secrets.PROD_API_KEY }}'

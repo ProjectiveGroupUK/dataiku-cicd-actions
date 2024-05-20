@@ -1,0 +1,104 @@
+name: Preprod Test
+
+on:
+  workflow_call:
+    inputs:
+      dss-project:
+        description: "Dataiku Project ID"
+        required: true
+        type: string
+      bundle-id:
+        description: "Bundle ID generated in Preparation Step"
+        required: true
+        type: string
+
+env:
+  design-node-url: https://dss-4e19401b-7badb918-dku.eu-west-3.app.dataiku.io
+  preprod-node-url: https://automation-4e19401b-7badb918-dku.eu-west-3.app.dataiku.io/
+  auto-preprod-id: auto-preprod
+
+jobs:
+  preprod:
+    name: Preprod Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          repository: "ProjectiveGroupUK/dataiku-cicd-actions"
+          ref: "main"
+
+      # - name: List files in this repository
+      #   run: ls -la
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          pip install -r requirements.txt
+
+      - name: Install Node.js and xml2js
+        run: |
+          curl -sL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+          sudo apt-get install -y nodejs
+          npm install xml2js
+
+      - name: Upload in preprod
+        run: python preprod_test/import_bundle.py '${{ env.design-node-url }}' '${{ secrets.DESIGN_API_KEY }}' '${{ inputs.dss-project }}' '${{ inputs.bundle-id }}' '${{ env.auto-preprod-id }}'
+
+      - name: Run tests
+        run: python -m pytest preprod_test/run_test.py -o junit_family=xunit1 --host='${{ env.preprod-node-url }}' --api='${{ secrets.PREPROD_API_KEY }}' --project='${{ inputs.dss-project }}' --junitxml=reports/PREPROD_TEST.xml
+
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Project validation test results
+          path: reports/**/*.xml
+
+      - name: Generate summary
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const xml2js = require('xml2js');
+            const parser = new xml2js.Parser();
+
+            // Read the JUnit XML report
+            const reportPath = 'reports/PREPROD_TEST.xml';
+            const reportXml = fs.readFileSync(reportPath, 'utf8');
+
+            // Parse the XML report
+            parser.parseString(reportXml, (err, result) => {
+              if (err) {
+                throw err;
+              }
+
+              // Log the parsed result for debugging
+              console.log(JSON.stringify(result, null, 2));
+
+              // Extract test results
+              const testsuite = result.testsuites.testsuite[0];
+              const tests = testsuite.testcase.map(testcase => ({
+                name: testcase.$.name,
+                classname: testcase.$.classname,
+                time: testcase.$.time,
+                failure: testcase.failure ? testcase.failure[0]._ : null,
+              }));
+
+              // Create a summary
+              let summary = `## Test Results\n\n`;
+              summary += `| Test | Class | Time | Result |\n`;
+              summary += `|------|-------|------|--------|\n`;
+              tests.forEach(test => {
+                summary += `| ${test.name} | ${test.classname} | ${test.time} | ${test.failure ? 'Failed' : 'Passed'} |\n`;
+              });
+
+              // Write to GitHub Actions summary
+              fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, summary);
+            });
