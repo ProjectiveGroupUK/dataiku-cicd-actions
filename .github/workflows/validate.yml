@@ -50,7 +50,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Project validation test results
-          path: reports/**/*.xml
+          path: reports/**/PROJECT_VALIDATION.xml
 
       - name: Generate summary
         if: always()
