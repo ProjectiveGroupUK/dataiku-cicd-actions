@@ -15,7 +15,7 @@ on:
 env:
   design-node-url: https://dss-4e19401b-7badb918-dku.eu-west-3.app.dataiku.io
   prod-node-url: https://automation-4e19401b-7badb918-dku.eu-west-3.app.dataiku.io/
-  auto-prod-id: auto-prod
+  auto-prod-id: automation_space-7badb918-dku_node-4e19401b
 
 jobs:
   preprod:
