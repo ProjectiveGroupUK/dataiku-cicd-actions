@@ -1,0 +1,94 @@
+name: Basic copy of the main file for deploying dependencies
+# This alternative requires that all projects have a scenario with the same ID ('TEST')
+
+on:
+  workflow_call:
+    inputs:
+      dss-project:
+        description: "Dataiku Project ID"
+        required: true
+        type: string
+      env-identifier:
+        description: "PREPROD or PROD"
+        required: true
+        type: string
+      dependency-type:
+        description: "UPSTREAM or DOWNSTREAM"
+        required: true
+        type: string
+
+env:
+  design-node-url: https://dss-4e19401b-7badb918-dku.eu-west-3.app.dataiku.io
+  preprod-node-url: https://automation-4e19401b-7badb918-dku.eu-west-3.app.dataiku.io/
+  auto-preprod-id: automation_space-7badb918-dku_node-4e19401b
+  prod-node-url: https://automation-4e19401b-7badb918-dku.eu-west-3.app.dataiku.io/
+  auto-prod-id: automation_space-7badb918-dku_node-4e19401b
+
+jobs:
+  extract-dependencies:
+    runs-on: ubuntu-latest
+    outputs:
+      upstream-matrix: ${{ steps.extract.outputs.upstream-matrix }}
+      is-upstream-empty: ${{ steps.extract.outputs.is-upstream-empty }}
+      downstream-matrix: ${{ steps.extract.outputs.downstream-matrix }}
+      is-downstream-empty: ${{ steps.extract.outputs.is-downstream-empty }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract Dependencies
+        id: extract
+        run: |
+          python3 - <<EOF
+          import yaml
+          import os
+          import json
+
+          if os.path.isfile('dependencies.yaml'):
+            with open('dependencies.yaml', 'r') as file:
+              data = yaml.safe_load(file)
+          
+            upstream = data.get('upstream', [])
+            downstream = data.get('downstream', [])
+          else:
+            upstream = []
+            downstream = []
+
+          with open(os.getenv('GITHUB_OUTPUT'), 'a') as output:
+            output.write(f'upstream-matrix={json.dumps(upstream)}\n')
+            output.write(f'downstream-matrix={json.dumps(downstream)}\n')
+            output.write(f'is-upstream-empty={"true" if not upstream else "false"}\n')
+            output.write(f'is-downstream-empty={"true" if not downstream else "false"}\n')          
+          EOF
+        shell: bash
+
+
+  deploy-downstream-dependencies:
+    needs: extract-dependencies
+    runs-on: ubuntu-latest
+    if: ${{ inputs.dependency-type == 'DOWNSTREAM' && needs.extract-dependencies.outputs.is-downstream-empty == 'false' }}
+    strategy:
+      matrix:
+        downstream_dependency: ${{ fromJson(needs.extract-dependencies.outputs.downstream-matrix) }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          repository: "ProjectiveGroupUK/dataiku-cicd-actions"
+          ref: "main"
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          pip install -r requirements.txt
+
+      - name: Trigger scenario
+        if: ${{ inputs.env-identifier == 'PROD' }}
+        run: python trigger_scenario/run_scenario.py '${{ env.design-node-url }}' '${{ secrets.DESIGN_API_KEY }}' '${{ matrix.downstream_dependency }}'
