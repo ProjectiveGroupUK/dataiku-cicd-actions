@@ -1,6 +1,7 @@
 import dataiku
 from dataikuapi.dss.project import DSSProject
 import logging
+import sys
 
 host = sys.argv[1]
 apiKey = sys.argv[2]
