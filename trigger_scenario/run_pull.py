@@ -24,7 +24,7 @@ except Exception as e:
 # Pull changes from the remote Git repository
 try:
     logging.info(f"Pulling changes from Git branch {branch_to_pull}...")
-    project_git.pull()
+    project_git.pull(branch_to_pull)
     logging.info(f"Successfully pulled changes from Git branch {branch_to_pull}.")
 except Exception as e:
     logging.error(f"Error pulling changes from Git branch {branch_to_pull}: {e}")
