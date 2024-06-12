@@ -1,5 +1,4 @@
-import dataiku
-from dataikuapi.dss.project import DSSProject
+import dataikuapi
 import logging
 import sys
 
