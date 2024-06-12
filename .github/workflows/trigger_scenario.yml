@@ -35,6 +35,9 @@ jobs:
           python -m pip install --upgrade pip setuptools wheel
           pip install -r requirements.txt
 
+      - name: Pull merged changes into dataiku DSS
+        run: python trigger_scenario/run_pull.py '${{ env.node-url }}' '${{ secrets.DESIGN_API_KEY }}' '${{ inputs.dss-project }}'
+
       - name: Trigger Scenario
         run: python trigger_scenario/run_scenario.py '${{ env.node-url }}' '${{ secrets.DESIGN_API_KEY }}' '${{ inputs.dss-project }}'
         
