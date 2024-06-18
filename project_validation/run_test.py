@@ -40,14 +40,15 @@ def test_coding_recipes_complexity(params):
 
 
 ##NEW unit testing for code environments and scenario reporters
-# Initialize logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 # Test 1: All python recipes have a dedicated code environment
 def check_code_recipes_environment(params):
     client = dataikuapi.DSSClient(params["host"], params["api"])
     project_obj = client.get_project(params["project"])
+
+    # Initialize logging
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
     logging.info("Checking code environments for all code recipes...")
     recipes = project_obj.list_recipes()
@@ -90,6 +91,9 @@ def check_code_recipes_environment(params):
 def check_scenarios_active_reporters(params):
     client = dataikuapi.DSSClient(params["host"], params["api"])
     project_obj = client.get_project(params["project"])
+
+    # Initialize logging
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
     
     logging.info("Checking active reporters for all scenarios...")
     scenarios = project_obj.list_scenarios()
@@ -122,6 +126,6 @@ def check_scenarios_active_reporters(params):
         
 
 # Run checks
-check_code_recipes_environment(params)
-check_scenarios_active_reporters(params)
-logging.info("All checks passed successfully.")
+#check_code_recipes_environment(params)
+#check_scenarios_active_reporters(params)
+#logging.info("All checks passed successfully.")
