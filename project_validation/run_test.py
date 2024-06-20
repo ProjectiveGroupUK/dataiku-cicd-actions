@@ -43,7 +43,7 @@ def test_coding_recipes_complexity(params):
 
 
 # Test 1: All python recipes have a dedicated code environment
-def check_code_recipes_environment(params):
+def test_check_code_recipes_environment(params):
     client = dataikuapi.DSSClient(params["host"], params["api"])
     project_obj = client.get_project(params["project"])
 
@@ -88,7 +88,7 @@ def check_code_recipes_environment(params):
         
 
 # Test 2: All scenarios have at least one active reporter
-def check_scenarios_active_reporters(params):
+def test_check_scenarios_active_reporters(params):
     client = dataikuapi.DSSClient(params["host"], params["api"])
     project_obj = client.get_project(params["project"])
 
