@@ -27,7 +27,7 @@ def pytest_generate_tests(metafunc):
         project = client.get_project(p_project)
         list_scenarios = []
         for scenario in project.list_scenarios():
-            if scenario["id"].startswith("TEST_"):
+            if 'CICD:Project Testing Scenario' in scenario['tags']:
                 print("Adding scenario to test :", scenario["id"])
                 list_scenarios.append(scenario["id"])
         metafunc.parametrize("scenario_id", list_scenarios)
