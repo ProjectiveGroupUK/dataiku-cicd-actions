@@ -43,7 +43,7 @@ jobs:
           npm install xml2js
 
       - name: Run tests
-        run: python -m pytest project_validation/run_test.py -o junit_family=xunit1 --host='${{ env.node-url }}' --api='${{ secrets.DATAIKU_DESIGN_API_KEY }}' --project='${{ inputs.dss-project }}' --junitxml=reports/EXPERIMENTS_VALIDATION.xml
+        run: python -m pytest project_validation/run_test.py -o junit_family=xunit1 --host='${{ env.node-url }}' --api='${{ secrets.DESIGN_API_KEY }}' --project='${{ inputs.dss-project }}' --junitxml=reports/EXPERIMENTS_VALIDATION.xml
 
       - name: Upload Test Results
         if: always()
