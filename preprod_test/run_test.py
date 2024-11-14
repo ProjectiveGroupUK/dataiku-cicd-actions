@@ -6,7 +6,6 @@ def test_run_scenario(params, scenario_id):
     logging.info("*************************")
     logging.info("Executing scenario ", scenario_id)
     client = dataikuapi.DSSClient(params["host"], params["api"])
-    client._session.verify = False
     project = client.get_project(params["project"])
     scenario_result = project.get_scenario(scenario_id).run_and_wait()
     # scenario_result = project.get_scenario(scenario_id).get_last_runs(limit=1)[0]

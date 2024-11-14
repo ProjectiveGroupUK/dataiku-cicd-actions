@@ -25,6 +25,7 @@ jobs:
         with:
           repository: "ProjectiveGroupUK/dataiku-cicd-actions"
           ref: "main"
+          token: ${{ secrets.PAT }}
 
       - name: Set up Python 3.10
         uses: actions/setup-python@v5
@@ -43,14 +44,14 @@ jobs:
           npm install xml2js
 
       - name: Run tests
-        run: python -m pytest project_validation/run_test.py -o junit_family=xunit1 --host='${{ env.node-url }}' --api='${{ secrets.DESIGN_API_KEY }}' --project='${{ inputs.dss-project }}' --junitxml=reports/EXPERIMENTS_VALIDATION.xml
+        run: python -m pytest project_validation/run_test.py -o junit_family=xunit1 --host='${{ env.node-url }}' --api='${{ secrets.DESIGN_API_KEY }}' --project='${{ inputs.dss-project }}' --junitxml=reports/DESIGN_VALIDATION.xml
 
       - name: Upload Test Results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: experiments-validation-${{ github.run_id }}
-          path: reports/**/EXPERIMENTS_VALIDATION.xml
+          name: design-validation-${{ github.run_id }}
+          path: reports/**/DESIGN_VALIDATION.xml
 
       - name: Generate summary
         if: always()
@@ -62,7 +63,7 @@ jobs:
             const parser = new xml2js.Parser();
 
             // Read the JUnit XML report
-            const reportPath = 'reports/EXPERIMENTS_VALIDATION.xml';
+            const reportPath = 'reports/DESIGN_VALIDATION.xml';
             const reportXml = fs.readFileSync(reportPath, 'utf8');
 
             // Parse the XML report
@@ -84,7 +85,7 @@ jobs:
               }));
 
               // Create a summary
-              let summary = `## Experiments Validation Results\n\n`;
+              let summary = `## DESIGN Validation Results\n\n`;
               summary += `| Test | Class | Time | Result |\n`;
               summary += `|------|-------|------|--------|\n`;
               tests.forEach(test => {
